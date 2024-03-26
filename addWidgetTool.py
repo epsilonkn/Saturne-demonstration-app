@@ -1,5 +1,5 @@
 #programme d'ajout de widget, permet de gagner du temps
-from typing import Optional, Tuple, Union
+from typing import Tuple
 import customtkinter as ct
 import json 
 
@@ -26,6 +26,9 @@ class AddWidgetTool(ct.CTk):
 
 
     def frameCreation(self):
+        """frameCreation 
+        Création de l'interface
+        """
         self.entry_name = ct.CTkEntry(self.upper_frame, width=200)
         self.entry_name.insert(0, 'nom du widget')
         
@@ -51,18 +54,32 @@ class AddWidgetTool(ct.CTk):
 
 
     def addtoListe(self, add : str):
+        """addtoListe 
+        On ajoute le paramètre séléctionné dans une liste
+
+        Parameters
+        ----------
+        add : str
+            paramètre séléctionné
+        """
         if add not in self.entries :
             self.entries.append(add)
             print(add)
 
 
     def readFile(self):
+        """readFile 
+        On récupère les données des widgets
+        """
         with open("rssDir\widgetInfo.json", "r") as file :
             self.widget_info = json.load(file)
         file.close()
 
 
     def addWidgetParameter(self):
+        """addWidgetParameter 
+        Ajoute le nouveau widget dans les fichiers ressources
+        """
         dico = {}
         dico["name"]        = self.entry_name.get()
         dico["id"]          = self.entry_id.get()
@@ -89,6 +106,9 @@ class AddWidgetTool(ct.CTk):
 
 
     def clear(self):
+        """clear 
+        Supprime tous les éléments de l'interface
+        """
         liste = self.upper_frame.grid_slaves() + self.lower_frame.grid_slaves()
         for element in liste :
             element.destroy()

@@ -1,0 +1,7 @@
+pour utiliser Saturne, veillez à bien installer la librairie Custom Tkinter.
+
+py -m pip install customtkinter
+
+si Custom Tkinter est déjà installé : 
+
+py -m pip install customtkinter --upgrade

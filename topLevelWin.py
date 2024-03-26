@@ -25,15 +25,24 @@ class TextTopLevelWin(ct.CTkToplevel):
 
 
     def on_quit(self):
+        """on_quit 
+        Fonction de destruction de la fenêtre
+        """
         self.destroy()
 
 
     def contentValidation(self):
+        """contentValidation 
+        Enregistre dans une variable le contenu de l'entrée texte validé
+        """
         self.choice = self.text_input.get()
         self.destroy()
         
 
     def contentGet(self):
+        """contentGet 
+        Renvoie le texte validé une fois la fenêtre fermée
+        """
         self.wait_window()
         return self.choice
 
@@ -71,6 +80,9 @@ class ValuesTopLevelWin(ct.CTkToplevel):
 
 
     def addValue(self):
+        """addValue 
+        Ajoute les widgets pour ajouter une nouvelle valeur dans la liste
+        """
         entry = ct.CTkEntry(self, height= 30, width=200, font= ct.CTkFont(family = "arial", size=15, weight="bold"))
         cross_bt = ct.CTkButton(self, text = "X", font= ct.CTkFont(family = "arial", size=15, weight="bold"), text_color="#FC2626", width= 20)
         cross_bt.configure(command= lambda x= cross_bt : self.delValue(x))
@@ -84,7 +96,15 @@ class ValuesTopLevelWin(ct.CTkToplevel):
         self.cancel_bt.grid_configure(row = self.max_row)
 
     
-    def delValue(self, cross): #à modifier
+    def delValue(self, cross : object):
+        """delValue 
+        Supprime les widgets lorsqu'on supprime une valeur 
+
+        Parameters
+        ----------
+        cross : object
+            défini la croix qui a été pressée
+        """
         for entries in self.entries :
             if entries[1] == cross :
                 entries[0].destroy()
@@ -93,16 +113,25 @@ class ValuesTopLevelWin(ct.CTkToplevel):
 
 
     def on_quit(self):
+        """on_quit 
+        Fonction de destruction de la fenêtre
+        """
         self.destroy()
 
  
     def contentValidation(self):
+        """contentValidation 
+        Récupère toutes les valeurs saisies pour les ajouter dans une liste à retourner
+        """
         for entry in self.entries :
             self.return_values.append(entry[0].get())
         self.destroy()
 
 
     def contentGet(self):
+        """contentGet 
+        Retourne la liste des valeurs une fois l'interface fermée
+        """
         self.wait_window()
         return self.return_values
     
@@ -161,10 +190,16 @@ class CommandTopLevelWin(ct.CTkToplevel):
 
 
     def on_quit(self):
+        """on_quit 
+        Fonction de destruction de la fenêtre
+        """
         self.destroy()
 
  
     def contentValidation(self):
+        """contentValidation 
+        Récupère la commande saisie par l'utilisateur
+        """
         if self.infotabview.get() == "Avec paramètres" :
             if not self.verifyContent(self.lambda_command_entry.get()) :
                 return
@@ -182,11 +217,29 @@ class CommandTopLevelWin(ct.CTkToplevel):
 
 
     def contentGet(self):
+        """contentGet 
+        Retourne la commande une fois la fenêtre fermée
+        """
         self.wait_window()
         return self.choice
     
 
-    def verifyContent(self, content):
+    def verifyContent(self, content : str) -> bool:
+        """verifyContent 
+        Vérifie qu'il n'y a pas d'erreurs dans la commande saisie :
+        - que les parenthèses ouvertes sont fermées
+        - que les simples et doubles quotes le sont aussi
+
+        Parameters
+        ----------
+        content : str
+            commande entrée à tester
+
+        Returns
+        -------
+        bool
+            renvoie True si la commande est valide, False sinon
+        """
         backslash = False
         parenthesis_count = 0
         simple_quote = 0
@@ -262,10 +315,16 @@ class VariableTopLevelWin(ct.CTkToplevel):
 
 
     def on_quit(self):
+        """on_quit 
+        Fonction de destruction de la fenêtre
+        """
         self.destroy()
 
 
     def contentValidation(self):
+        """contentValidation 
+        Enregistre la variable entrée si elle correspond à la syntaxe python
+        """
         if interl.tryWN(self.text_input.get()) :
             self.choice = self.text_input.get()
             self.destroy()
@@ -275,6 +334,9 @@ class VariableTopLevelWin(ct.CTkToplevel):
         
 
     def contentGet(self):
+        """contentGet 
+        Retourne la variable une fois la fenêtre fermée
+        """
         self.wait_window()
         return self.choice
     

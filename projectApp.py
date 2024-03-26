@@ -13,6 +13,8 @@ class ProjectApp(ct.CTkToplevel):
         self.newprojectname = None
         settings = self.openWinSets()
         self.tooltip = settings["tooltip"]
+        
+        self.title("Projects")
 
         self.language = language
         self.language_dict = language_dict
@@ -38,6 +40,9 @@ class ProjectApp(ct.CTkToplevel):
 
 
     def workFrameCreation(self, event = None):
+        """workFrameCreation 
+        Création de l'interface d'ajout d'un projet
+        """
         self.clear("workFrame")
         
         self.project_label = ct.CTkLabel(self.work_frame, text = self.language_dict["project_label"][self.language], width=600)
@@ -49,7 +54,15 @@ class ProjectApp(ct.CTkToplevel):
         self.content_valid_bt.grid(row =2, column = 0, pady = 15)
 
 
-    def modifyFrame(self, project):
+    def modifyFrame(self, project : str):
+        """modifyFrame 
+        Création de la fenêtre de modification d'un projet
+
+        Parameters
+        ----------
+        project : str
+            Nom du projet choisi
+        """
         self.clear("workFrame")
 
         self.actual_prjt = project 
@@ -122,11 +135,22 @@ class ProjectApp(ct.CTkToplevel):
 
 
     def loadPrjctInfo(self):
+        """loadPrjctInfo 
+        Charge les paramètres d'un projet
+
+        Returns
+        -------
+        dict
+            Retourne le dictionnaire des paramètres du widget
+        """
         dico =  interl.getPrjtSetRqst(self.actual_prjt)
         return dico
             
 
     def modifyInfo(self):
+        """modifyInfo 
+        Modifie les paramètres d'un projet
+        """
         modify = True
         try : 
             name = self.win_name.get()
@@ -164,12 +188,12 @@ class ProjectApp(ct.CTkToplevel):
                 rename = interl.renameDirReq(self.actual_prjt, newname)
                 if rename == False :
                     messagebox.showerror("Erreur de sauvergade.", "Une erreur est survenue lors du renommage du projet.")
-                    return 0
+                    return
                 else :
                     self.project_info.insert(self.project_info.index(self.actual_prjt), newname)
                     del self.project_info[self.project_info.index(self.actual_prjt)]
                     converted_info = ",".join(self.project_info)
-                    with open("rssDir\prjctNameSave.txt", "w", encoding= 'utf8') as file :
+                    with open("rssDir\\prjctNameSave.txt", "w", encoding= 'utf8') as file :
                         file.write(converted_info)
                     file.close()
                     self.actual_prjt = newname
@@ -180,12 +204,18 @@ class ProjectApp(ct.CTkToplevel):
 
     
     def openProjectInfo(self):
-        with open("rssDir\prjctNameSave.txt", "r", encoding= 'utf8') as file :
+        """openProjectInfo 
+        Ouvre le fichier texte contenant le nom de tous les projets
+        """
+        with open("rssDir\\prjctNameSave.txt", "r", encoding= 'utf8') as file :
             self.project_info = file.read().split(",")
         file.close()
 
 
     def sideFrameUpdating(self):
+        """sideFrameUpdating 
+        Création de la fenêtre déroulante à gauche
+        """
         self.openProjectInfo()
         self.clear("sideFrame")
         self.add_button = ct.CTkButton(self.side_frame, text = self.language_dict["add_project_label"][self.language], width = 160, height = 30, command = lambda : self.workFrameCreation())
@@ -198,12 +228,15 @@ class ProjectApp(ct.CTkToplevel):
 
 
     def addProject(self, event = None):
+        """addProject 
+        Ajoute un projet dans l'application
+        """
         self.newprojectname = self.entry.get()
         self.project_info.append(self.newprojectname)
         converted_info = ",".join(self.project_info)
 
         
-        with open("rssDir\prjctNameSave.txt", "w", encoding= 'utf8') as file :
+        with open("rssDir\\prjctNameSave.txt", "w", encoding= 'utf8') as file :
             file.write(converted_info)
         file.close()
         
@@ -216,13 +249,21 @@ class ProjectApp(ct.CTkToplevel):
         self.modifyFrame(self.newprojectname)
 
 
-    def delProject(self, project):
+    def delProject(self, project : str):
+        """delProject 
+        Supprime un projet de l'application
+
+        Parameters
+        ----------
+        project : str
+            Nom du projet à supprimer
+        """
         try : 
             if type(project) == str :
                 interl.rmproject(project)
             del self.project_info[self.project_info.index(project)]
             converted_info = ",".join(self.project_info)
-            with open("rssDir\prjctNameSave.txt", "w", encoding= 'utf8') as file :
+            with open("rssDir\\prjctNameSave.txt", "w", encoding= 'utf8') as file :
                 file.write(converted_info)
             file.close()
             
@@ -234,10 +275,26 @@ class ProjectApp(ct.CTkToplevel):
 
 
     def openWinSets(self) :
-        with open("rssDir\wdSettings.json", "r", encoding= 'utf8') as file :
+        """openWinSets 
+        Ouvre les paramètres de l'interface de l'application
+
+        Returns
+        -------
+        dict
+            Retourne le dictionnaire des paramètres
+        """
+        with open("rssDir\\wdSettings.json", "r", encoding= 'utf8') as file :
             return json.load(file)
 
-    def clear(self, choice):
+    def clear(self, choice : str):
+        """clear 
+        Supprime les widgets d'une partie précise de l'interface
+
+        Parameters
+        ----------
+        choice : str
+            Choix de la partie à supprimer
+        """
         if choice == "sideFrame":
             liste = self.side_frame.grid_slaves()
         if choice =='workFrame':
@@ -247,5 +304,13 @@ class ProjectApp(ct.CTkToplevel):
     
 
     def closed(self):
+        """closed 
+        Retourne le projet ouvert lorsque la fenêtre est fermée
+
+        Returns
+        -------
+        str, None
+            Retourne le nom du projet ouvert, ou None si aucun n'est ouvert
+        """
         self.master.wait_window(self)  
         return self.actual_prjt

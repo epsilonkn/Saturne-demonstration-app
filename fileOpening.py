@@ -51,6 +51,7 @@ def renameDir(oldname : str, newname : str ) -> bool :
         print(error)
         return False
 
+
 def rmDirectory(name : str) -> None:
     """rmDirectory 
     fonction de suppression d'un dossier
@@ -82,36 +83,21 @@ def emptyDir(path : str) -> bool:
     """
     if os.path.exists(path) :
         return True if os.listdir(path) == [] else False
-    
 
-def verifyDir(name : str) -> bool:
+
+def verifyDir(path : str) -> bool:
     """verifyDir 
     vérifie que les fichiers enfants inhérents au dossier ciblé sont présent
 
     Parameters
     ----------
-    name : str
-        nom du dossier à vérifier
+    path : str
+        Chemin d'accès du dossier à vérifier
 
     Returns
     -------
     bool
         return True si tous les fichiers sont présent, sinon, appele la fonction "addFiletoDir" puis renvoie True
-    """
-    path = os.getcwd() +"\\"+ name
-    if os.path.exists(path) :
-        files = os.listdir(path)
-        if "code.py" in files and "prjtset.json" in files and "widNmeList.txt" in files :
-            return True
-        else :
-            addFiletoDir(path)
-            return True
-
-
-def verifyDir(path : str) -> bool:
-    """verifyDir 
-    surcharge du la fonction précédente du même nom,
-    ici, le paramètre est remplacé par path, dans le cas, ou l'appelant possède le chemin d'accès, et non le nom
     """
     if os.path.exists(path) :
         files = os.listdir(path)
@@ -124,12 +110,12 @@ def verifyDir(path : str) -> bool:
 
 def addFiletoDir(path : str) -> None:
     """addFiletoDir 
-    fonction d'ajout des fichiers de base à un dossier si ils sont manquant
+    Fonction d'ajout des fichiers de base à un dossier si ils sont manquant
 
     Parameters
     ----------
     path : str
-        chemin d'accès au dossier
+        Chemin d'accès au dossier
     """
     files = os.listdir(path)
     if "code.py" not in files :
@@ -150,7 +136,7 @@ def rmFiles(path : str) -> None:
     Parameters
     ----------
     path : str
-        chemin d'accès à un dossier
+        Chemin d'accès à un dossier
     """
     files_list = os.listdir(path)
     for files in files_list :
@@ -167,24 +153,24 @@ def rmFile(path : str) -> None:
     Parameters
     ----------
     path : str
-        chemin d'accès du fichier à supprimer
+        Chemin d'accès du fichier à supprimer
     """
     os.remove(path)
 
 
 def createPath(target : str) -> str:
     """createPath 
-    crée un chemin d'accès à partir du chemin absolu du programme et du nom du fichier ou du dossier cible
+    Crée un chemin d'accès à partir du chemin absolu du programme et du nom du fichier ou du dossier cible
 
     Parameters
     ----------
     target : str
-        fichier ou dossier ciblé
+        Fichier ou dossier ciblé
 
     Returns
     -------
     str
-        retourne le chemin d'accès de la cible
+        Retourne le chemin d'accès de la cible
     """
     return os.path.join(os.getcwd(), target)
 
@@ -194,14 +180,14 @@ def createPath(target : str) -> str:
 
 def mPS(path : str, info : dict) -> None:
     """mPS : modify Project Settings 
-    écrase les précédents paramètres du projet ciblé par les nouveaux
+    Ecrase les précédents paramètres du projet ciblé par les nouveaux
 
     Parameters
     ----------
     path : str
-        fichier ciblé
+        Fichier ciblé
     info : dict
-        dictionnaire des paramètres
+        Dictionnaire des paramètres
     """
     with open(path, "w", encoding= 'utf8') as file :
         json.dump(info, file)
@@ -217,68 +203,68 @@ def rmWid(widget : str, project : str) -> None :
     Parameters
     ----------
     widget : str
-        widget à supprimer
+        Widget à supprimer
     project : str
-        projet parent du widget
+        Projet parent du widget
     """
     path = createPath(project)
     os.remove(path + "\\" + widget + ".json")
-    with open(path + "\widNmeList.txt", 'r', encoding= 'utf8') as file :
+    with open(path + "\\widNmeList.txt", 'r', encoding= 'utf8') as file :
         data = file.read().split(",")
         del data[data.index(widget)]
         data = ",".join(data)
-    with open(path + "\widNmeList.txt", 'w', encoding= 'utf8') as file :
+    with open(path + "\\widNmeList.txt", 'w', encoding= 'utf8') as file :
         file.write(data)     
 
 
 def cWSF(path : str, name : str, settings : dict) -> None:
     """cWSF : create Widget Settings File
-    crée le fichier correspondant au widget créé par l'utilisateur
+    Crée le fichier correspondant au widget créé par l'utilisateur,
     modifie la liste des widgets dans le fichier "widNmeList.txt"
 
     Parameters
     ----------
     path : str
-        chemin d'accès au fichier du widget
+        Chemin d'accès au fichier du widget
     name : str
         nom du widget
     settings : dict
-        dictionnaire des paramètres du widget
+        Dictionnaire des paramètres du widget
     """
     with open(path + "\\" + name + ".json", "w", encoding= 'utf8') as file :
         json.dump(settings, file)
-    with open(path + "\widNmeList.txt", 'a', encoding= 'utf8') as file :
+    with open(path + "\\widNmeList.txt", 'a', encoding= 'utf8') as file :
         file.write("," + name)
     
 
 def mWS(path : str, newname : str, oldname : str, settings : dict) -> None :
     """mWS : modify Widget Settings
-    à la manière de la fonction "cWSF", crée un fichier contenant les nouvelles données du widget
+    A la manière de la fonction "cWSF", crée un fichier contenant les nouvelles données du widget,
     si le nom du widget a été changé, la fonction modifie aussi le nom dans le fichier "widNmeList.txt"
 
     Parameters
     ----------
     path : str
-        chemin d'accès du dossier du projet parent
+        Chemin d'accès du dossier du projet parent
     newname : str
-        nouveau nom du widget
+        Nouveau nom du widget
     oldname : str
-        ancien nom du widget 
+        Ancien nom du widget 
     note : newname et oldname peut être identiques
     settings : dict
-        dictionnaires contenant les paramètres du widget
+        Dictionnaires contenant les paramètres du widget
     """
     with open(path + "\\" + newname + ".json", "w", encoding= 'utf8') as file :
         json.dump(settings, file)
     if newname != oldname :
-        with open(path + "\widNmeList.txt", 'r', encoding= 'utf8') as file :
+        with open(path + "\\widNmeList.txt", 'r', encoding= 'utf8') as file :
             data = file.read().split(',')
             print(data)
             data.insert(data.index(oldname), newname)
             del data[data.index(oldname)]
             print(data)
             data = ','.join(data)
-        with open(path + "\widNmeList.txt", 'w', encoding= 'utf8') as file :
+        with open(path + "\\widNmeList.txt", 'w', encoding= 'utf8') as file :
             file.write(data)
 
 
@@ -292,35 +278,38 @@ def loadInfo(path : str = None, data : str = 'prjctInfo') -> Union[dict, list, N
     Parameters
     ----------
     path : str, optional
-        chemin d'accès au fichier, by default None
+        Chemin d'accès au fichier, by default None
     data : str, optional
-        précise les données à charger :
+        Précise les données à charger :
         -widsets      : chargement des données relative à un widget précis (widgetInfo.json)
         -setsinfo     : chargement des données relatives aux paramètres des widgets 
         -prjctInfo    : chargement des paramètres du projet selectionné
         -widNameList  : chargement de la liste des widget du projet selectionné
         -actualwidSet : chargement des données d'un widget créé par l'utilisateur
         -prjtCode     : chargement du code du projet 
+        -prjtCodeList : Chargement du code du projet sous forme d'une liste
 
     Returns
     -------
     Union[dict, list, None]
-        retourne :
+        Retourne :
         -widsets      : retourne un dictionnaire si le chargement a réussi, None sinon
         -setsinfo     : retourne un dictionnaire si le chargement a réussi, None sinon
         -prjctInfo    : retourne un dictionnaire si le chargement a réussi, None sinon
         -widNameList  : retourne la liste des widget si le chargement a réussi, une liste vide sinon
         -actualwidSet : retourne un dictionnaire si le chargement a réussi, False sinon
+        -prjtCode     : retourne lu code du projet si le chargement du projet a réussi, None sinon
+        -prjtCodeList : retourne lu code du projet sous forme d'une liste si le chargement du projet a réussi, None sinon
     """
     if data == "widsets" :
         try : 
-            with open('rssDir\widgetInfo.json', "r", encoding= 'utf8') as file:
+            with open('rssDir\\widgetInfo.json', "r", encoding= 'utf8') as file:
                 return json.load(file)
         except :
             return None
     if data == 'setsinfo' :
         try : 
-            with open('rssDir\widParaInfo.json', "r", encoding= 'utf8') as file:
+            with open('rssDir\\widParaInfo.json', "r", encoding= 'utf8') as file:
                 return json.load(file)
         except :
             return None
@@ -333,7 +322,7 @@ def loadInfo(path : str = None, data : str = 'prjctInfo') -> Union[dict, list, N
                 return None
     if data == "widNameList" :
         try :
-            with open(path + "\widNmeList.txt", 'r', encoding= 'utf8') as file :
+            with open(path + "\\widNmeList.txt", 'r', encoding= 'utf8') as file :
                 widsaved = file.read().split(",")
             file.close()
             return widsaved
@@ -361,16 +350,16 @@ def loadInfo(path : str = None, data : str = 'prjctInfo') -> Union[dict, list, N
             return None
         
 
-def wCode(project, code):
+def wCode(project : str, code : list):
     """wCode 
-    écrase le code d'un projet par le nouveau
+    Ecrase le code d'un projet par le nouveau
 
     Parameters
     ----------
-    project : _type_
-        _description_
-    code : _type_
-        _description_
+    project : str
+        Nom du projet
+    code : list
+        Code du projet sous forme d'une liste
     """
     path = createPath(project + "\\" + "code.py")
     with open(path, "w", encoding= 'utf8') as file :

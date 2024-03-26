@@ -10,6 +10,7 @@ from settingsApp import AppEditing
 from widgetApp import WidgetApp
 from projectApp import ProjectApp
 from topLevelWin import *
+import webbrowser
 
 
 class interface(ct.CTk):
@@ -21,7 +22,7 @@ class interface(ct.CTk):
         self.widgets_list = [] #liste des widgets existant dans le projet ouvert
         self.actual_sets = [] #liste des paramètres utilisés dans l'application
         self.layout_list = [] #liste contenant des paramètres de layout, comprenant pour chacun : leur nom, entrée associée, et valeur par défaut
-        self.language_dict = {}
+        self.language_dict = {} #dictionnaire contenant les traductions
         self.settings = None # défini si la fenêtre de paramètre est ouverte ou non
         self.widgetapp = None # défini si la fenêtre de widgets est ouverte ou non
         self.project_app = None # défini si la fenêtre des projets est ouverte ou non
@@ -30,12 +31,15 @@ class interface(ct.CTk):
         self.widget_id = None # défini l'ID du widget de self.actual_widget
         self.app = None
 
+        #on récupère la liste des polices d'écriture supportées par custom tkinter
         self.tk_family_path = interl.getRssPath("tk_family.txt")
         with open(self.tk_family_path, "r", encoding='utf8') as file :
             self.tk_family = file.readlines()
             for element in self.tk_family :
                 element.replace("\n", "")
         file.close()
+
+        #on récupère le dictionnaire de langue
         language_dict_path = interl.getRssPath("languageDict.json")
         with open(language_dict_path, 'r', encoding='utf8') as file :
             self.language_dict = json.load(file)
@@ -51,6 +55,7 @@ class interface(ct.CTk):
             self.widgetParametersFrame(self.actual_widget)
         self.openProjectApp(reason = "new")
 
+        #on initialise les raccourcis clavier
         self.bind("<Alt-p>", self.openParameters)
         self.bind("<Control-c>", self.copyCode)
         self.bind("<Control-p>", self.openPreview)
@@ -64,10 +69,10 @@ class interface(ct.CTk):
         
 
     def createInterface(self) -> None:
+        """createInterface
+        Fonction de création du corps de l'interface
+        """
         try :
-            """createInterface
-            Fonction de création du corps de l'interface
-            """
             #-------------------- création des frames --------------------
             
             
@@ -86,7 +91,6 @@ class interface(ct.CTk):
 
             #-------------------- création du menu --------------------
 
-
             self.menubar = tk.Menu(self)
             self.config(menu=self.menubar)
 
@@ -97,6 +101,7 @@ class interface(ct.CTk):
             
             self.fichier.add_command(label = self.language_dict["menufile1"][self.int_lang], command = lambda x = self.actual_project : self.openProjectApp(x))
             self.fichier.add_command(label = self.language_dict["menufile2"][self.int_lang], command = lambda x = "new" : self.openProjectApp(x))
+            self.fichier.add_command(label = "Help", command = lambda : webbrowser.open("https://github.com/epsilonkn/Saturne-demonstration-app/wiki"))
             
             self.application.add_command(label= self.language_dict["menuapp1"][self.int_lang], command = lambda x = "all" : self.clear(x))
             self.application.add_command(label= self.language_dict["menuapp2"][self.int_lang], command = lambda : self.openParameters())
@@ -247,7 +252,7 @@ class interface(ct.CTk):
                 
                 detail_dico = {"Simple" : (0,1), "Normal" : (1,2), "Complet" : (1,2,3)}
                 
-                #on crée le reste des paramètres, selon le type ( soit une entrée texte, un menu, ou un switch)
+                #on crée le reste des paramètres, selon le type ( soit une entrée texte, un menu, un switch, ou un bouton)
                 for parameter in widsets["parameters"]:
                     
                     if self.setsinfo[parameter][1] in detail_dico[self.detail_lvl] :
@@ -260,7 +265,11 @@ class interface(ct.CTk):
                                 try : self.fontvar= ct.StringVar(value = self.actualwidset[0][parameter])
                                 except : self.fontvar = ct.StringVar(value = "0")
                                 entry.configure(command = lambda : self.showFontFrame(), variable = self.fontvar)
-                        
+
+                        elif parameter in ("width", "height") :
+                            entry = ct.CTkEntry(self.settings_frame, width = 100,font=ct.CTkFont(weight="bold"))
+                            entry.insert(0, self.actualwidset[0][parameter] if self.actualwidset[0][parameter] != self.setsinfo[parameter][0] else "default")
+
                         elif parameter in ["state", "anchor", "compound", "justify"]:
                             entry = ct.CTkOptionMenu(self.settings_frame, values = self.setsinfo[parameter][3])  
                             entry.set(self.actualwidset[0][parameter])  
@@ -311,8 +320,12 @@ class interface(ct.CTk):
 
 
     def codeFrame(self):
-        #permet d'afficher le code de l'interface
+        """codeFrame 
+        Actualisation de la fenêtre de code
+        """
+        #on récupère le code
         self.txt_code = interl.getCodeReq(self.actual_project)
+        #on renvoie un message d'erreur si le code n'a pas été récupéré
         if self.txt_code == None :
             messagebox.showerror("Erreur d'affichage", "Une erreur est survenue lors de l'affichage du code.")
             return
@@ -567,7 +580,7 @@ class interface(ct.CTk):
 
 
     def fLoadFunct(self, event : str, *dico : dict) -> Union[None, dict]:
-        """fLoadFunct _summary_
+        """fLoadFunct 
         Fonction d'envoi de requêtes de chargement/envoi de données
 
         Parameters
@@ -575,8 +588,8 @@ class interface(ct.CTk):
         event : str
             décrit l'action à réaliser :
             -widnamelist : récupère la liste des widgets du projet, et actualise la frame des widget
-            -getWidSet : récupère les données d'un widget ciblé            ( fichier "[nom du projet]\[nom du widget].json")
-            -modifyWidSet : modifie les données d'un widget ciblé          ( fichier "[nom du projet]\[nom du widget].json")
+            -getWidSet : récupère les données d'un widget ciblé            ( fichier "[nom du projet]\\[nom du widget].json")
+            -modifyWidSet : modifie les données d'un widget ciblé          ( fichier "[nom du projet]\\[nom du widget].json")
             -getsetsinfo : récupère les données des paramètres des widgets ( fichier "widParaInfo.json")
             -getWidInfo : récupères les données de base du widget ciblé    ( fichier "widgetInfo.json")
         Returns
@@ -637,7 +650,8 @@ class interface(ct.CTk):
             for element in self.actual_sets :
                 
                 if element[1] in ["width", "height"] :
-                    dico[element[1]] = int(element[0].get())
+                    if element[0].get() != "default" :
+                        dico[element[1]] = int(element[0].get())
                 
                 #on s'occupe des paramètres de font
                 elif element[1] == "font" :
@@ -691,7 +705,15 @@ class interface(ct.CTk):
 
                 elif element[1] == "variable" :
                     dico[element[1]] = self.variable
-
+                elif element[1] == "master" :
+                    if element[0].get() != "window" :
+                        if element in self.widgets_list :
+                            dico[element[1]] = element[0].get()
+                        else : 
+                            messagebox.showerror("Erreur d'entrée", "Le widget parent sélectionné n'existe pas")
+                            return
+                    else : 
+                        dico[element[1]] = "window"
                 else : 
                     dico[element[1]] = element[0].get()
             
@@ -710,7 +732,7 @@ class interface(ct.CTk):
         attribue les paramètres chargé aux variable de l'application
         """
         try :
-            with open("rssDir\wdSettings.json", "r") as file :
+            with open("rssDir\\wdSettings.json", "r") as file :
                 self.parameters = json.load(file)
             file.close()
             if self.parameters["fullscreen"]: 
@@ -796,7 +818,7 @@ class interface(ct.CTk):
         event : any
             paramètre présent si la fonction est appelée via le raccouri clavier
         """
-        document = interl.getProjectPath(self.actual_project) + "\code.py"
+        document = interl.getProjectPath(self.actual_project) + "\\code.py"
         with open(document,"r")as file:
             code = file.read()
             code = code + "\nwindow.mainloop()"

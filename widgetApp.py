@@ -11,6 +11,7 @@ class WidgetApp(ct.CTkToplevel):
         super().__init__()
 
         self.getWidget()
+        self.title("Widgets")
         self.choice = None
 
         self.main_frame = ct.CTkScrollableFrame(self, width=360, height = 150)
@@ -27,16 +28,30 @@ class WidgetApp(ct.CTkToplevel):
 
 
     def getWidget(self):
-        with open("rssDir\widgetRss.json", "r", encoding= 'utf8') as file :
+        """getWidget 
+        Récupère les widgets existants
+        """
+        with open("rssDir\\widgetRss.json", "r", encoding= 'utf8') as file :
             self.widgets_list = json.load(file)
         file.close()
 
 
-    def choiceDone(self, choice):
+    def choiceDone(self, choice : str):
+        """choiceDone 
+        Enregistre l'ID du widget choisi
+
+        Parameters
+        ----------
+        choice : str
+            ID du widget choisi
+        """
         self.choice = choice
         self.destroy()
 
 
     def get(self):
+        """get 
+        Retourne l'ID du widget choisi une fois la fenêtre fermée
+        """
         self.master.wait_window(self)
         return self.choice

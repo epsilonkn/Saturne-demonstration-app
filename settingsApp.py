@@ -17,6 +17,8 @@ class AppEditing(ct.CTkToplevel):
         self.parameters = deepcopy(parameters)
         self.color = ct.StringVar()
         self.theme = ct.StringVar()
+        self.title("Settings")
+        self.protocol("WM_DELETE_WINDOW", self.quitSettings)
         
         self.language_ref = {"Français" : 1, "English" : 0, "日本語" : 2}
 
@@ -172,12 +174,18 @@ class AppEditing(ct.CTkToplevel):
 
 
     def quitSettings(self):
-        on_quit = messagebox.askyesno("Qitter les paramètres", "Voulez-vous quitter les paramètres ?\n(les modifications ne seront pas enregistrées).")
+        """quitSettings 
+        Demande à l'utilisateur si il veut quitter les paramètres
+        """
+        on_quit = messagebox.askyesno("Quitter les paramètres", "Voulez-vous quitter les paramètres ?\n(les modifications ne seront pas enregistrées).")
         if on_quit :
             self.destroy()
 
 
     def applySettings(self):
+        """applySettings 
+        Vérifie si les paramètres sont valides, puis applique les changements.
+        """
         try :
             self.parameters["width"] = int(self.screen_width.get())
         except any as error :
@@ -221,7 +229,7 @@ class AppEditing(ct.CTkToplevel):
             return
         self.parameters["language"]     = self.language_choice.get()
         self.parameters["int_language"] = self.language_ref[self.language_choice.get()]
-        with open("rssDir\wdSettings.json", "w") as file:
+        with open("rssDir\\wdSettings.json", "w") as file:
             json.dump(self.parameters, file)
         file.close()
         self.destroy()
@@ -229,12 +237,15 @@ class AppEditing(ct.CTkToplevel):
 
 
     def get(self):
+        """get 
+        Fonction d'attente de la fermeture de la fenêtre, renvoie la liste des paramètres à l'issue
+        """
         self.master.wait_window(self)
         return self.parameters
     
 
 if __name__ == "__main__" :
-    with open ("rssDir\wdSettings.json", "r") as file :
+    with open ("rssDir\\wdSettings.json", "r") as file :
         settings = json.load(file)
     app = AppEditing(settings)
     app.mainloop()

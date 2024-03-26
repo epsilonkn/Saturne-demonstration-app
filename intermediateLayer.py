@@ -6,13 +6,13 @@ from typing import *
 
 def newPrjctRqst(name : str) -> None: 
     """newPrjctRequest 
-    fonction de transition entre le programme de l'interface et le programme de gestions des fichiers
+    Fonction de transition entre le programme de l'interface et le programme de gestions des fichiers,
     envoie une requête de création d'un dossier pour un nouveau projet
 
     Parameters
     ----------
     name : str
-        nom du dossier à créer
+        Nom du dossier à créer
     """
     fileop.dirCreation(name)
 
@@ -24,7 +24,7 @@ def rmproject(name : str) -> None:
     Parameters
     ----------
     name : str
-        nom du fichier
+        Nom du fichier
     """
     fileop.rmDirectory(name)
 
@@ -36,9 +36,9 @@ def modidyPrjctRqst(name : str, dico : dict) -> None:
     Parameters
     ----------
     name : str
-        nom du projet
+        Nom du projet
     dico : dict
-        dictionnaire des paramètres du projet
+        Dictionnaire des paramètres du projet
     """
     path = fileop.createPath(name)
     old_data = fileop.loadInfo(path)
@@ -59,12 +59,12 @@ def getPrjtSetRqst(name : str) -> dict:
     Parameters
     ----------
     name : str
-        nom du projet
+        Nom du projet
 
     Returns
     -------
     dict
-        paramètres du projet ciblé
+        Paramètres du projet ciblé
     """
     path = fileop.createPath(name)
     return fileop.loadInfo(path = path)
@@ -77,7 +77,7 @@ def getMainWidSetsRqst() -> dict:
     Returns
     -------
     dict
-        paramètres du widget ciblé
+        Paramètres du widget ciblé
     """
     return fileop.loadInfo(data = "widsets")
 
@@ -89,7 +89,7 @@ def getSetsInfoRqst() -> dict:
     Returns
     -------
     dict
-        dictionnaire des données de chaque paramètre dans tkinter
+        Dictionnaire des données de chaque paramètre dans tkinter
     """
     return fileop.loadInfo(data = 'setsinfo')
 
@@ -101,12 +101,12 @@ def getWidNameListReq(project : str) -> list:
     Parameters
     ----------
     project : str
-        nom du projet ciblé
+        Nom du projet ciblé
 
     Returns
     -------
     list
-        liste contenant le nom de chaque widget du projet
+        Liste contenant le nom de chaque widget du projet
     """
     path = fileop.createPath(project)
     print(path)
@@ -120,14 +120,14 @@ def getWidSetReq(widname : str, project : str) -> dict:
     Parameters
     ----------
     widname : str
-        nom du widget
+        Nom du widget
     project : str
-        nom du projet parent du widget
+        Nom du projet parent du widget
 
     Returns
     -------
     dict
-        dictionnaire composé des paramètres du widget
+        Dictionnaire composé des paramètres du widget
     """
     path = fileop.createPath(project + "\\" + widname + ".json")
     return fileop.loadInfo(path, "actualwidSet")
@@ -140,14 +140,14 @@ def createWidSetFileReq(newwidget : str, project : str) -> str:
     Parameters
     ----------
     newwidget : str
-        nom du nouveau widget
+        Nom du nouveau widget
     project : str
-        nom du projet parent du widget
+        Nom du projet parent du widget
 
     Returns
     -------
     str
-        retourne le nouveau nom du widget
+        Retourne le nouveau nom du widget
     """
     return flmngt.cNWSF(newwidget, project)
 
@@ -159,13 +159,13 @@ def modifyWidSetReq(widget : str, widname : str, dico : list, project : str) -> 
     Parameters
     ----------
     widget : str
-        identifiant du widget ( label, button etc)
+        Identifiant du widget ( label, button etc)
     widname : str
-        nom du widget ( donné par l'utilisateur/ par le programme)
+        Nom du widget ( donné par l'utilisateur/ par le programme)
     dico : list
-        dictionnaire des paramètres du widget
+        Dictionnaire des paramètres du widget
     project : str
-        nom du projet parent du widget
+        Nom du projet parent du widget
     """
     path = fileop.createPath(project+ "\\" + widname + ".json")
     old_data = fileop.loadInfo(path, data = "actualwidSet")
@@ -182,9 +182,9 @@ def delWidReq(widget : str, wid_id : str, project : str) -> None:
     Parameters
     ----------
     widget : str
-        nom du widget
+        Nom du widget
     project : str
-        nom du projet parent du widget
+        Nom du projet parent du widget
     """
     path = fileop.createPath(project + "\\" + "code.py")
     code = codeGen.delWidCode( widget, wid_id, path)
@@ -206,12 +206,12 @@ def tryWN(name : str) -> bool:
     Parameters
     ----------
     name : str
-        nom de widget à tester
+        Nom de widget à tester
 
     Returns
     -------
     bool
-        renvoie True si le nom est valide, False sinon
+        Renvoie True si le nom est valide, False sinon
     """
     allowedchar = [
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
@@ -229,6 +229,21 @@ def tryWN(name : str) -> bool:
 
 
 def tryFont(family :str, family_list : str ) -> str :
+    """tryFont 
+    Vérifie si la police d'écriture entrée dans les paramètres de font est supportée par tkinter
+
+    Parameters
+    ----------
+    family : str
+        Police d'écriture entrée
+    family_list : str
+        Liste des polices d'écritures supportées par tkinter
+
+    Returns
+    -------
+    str
+        Retourne True si elle est valide, False sinon
+    """
     #on récupère le
     family = family.capitalize().strip()
     if family + '\n' in family_list :
@@ -237,11 +252,37 @@ def tryFont(family :str, family_list : str ) -> str :
         return False
 
 
-def getRssPath(rss):
+def getRssPath(rss : str ) -> str :
+    """getRssPath 
+    Retourne le chemin d'accès d'une ressource dans le fichier ressources
+
+    Parameters
+    ----------
+    rss : str
+        Nom de la ressource demandée
+
+    Returns
+    -------
+    str
+        Retourne le chemin d'accès de la ressource demandée
+    """
     return fileop.createPath("rssDir" + "\\" + rss)
 
 
-def getProjectPath(project):
+def getProjectPath(project : str) -> str:
+    """getProjectPath 
+    Retourne le chemin d'accès du projet
+
+    Parameters
+    ----------
+    project : str
+        Nom du projet
+
+    Returns
+    -------
+    str
+        Chemin d'accès du projet
+    """
     return fileop.createPath(project)
 
 

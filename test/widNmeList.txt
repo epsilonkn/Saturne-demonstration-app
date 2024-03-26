@@ -1,1 +1,1 @@
-,label1,entry1,optionmenu1
+,entry1,frame1
